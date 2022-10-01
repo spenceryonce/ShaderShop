@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>ShaderShop</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+        }
+        html,body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+</head>
+<body>
+    <nav>
+        <ul class="columns">
+            <li class="column is-one-quarter"><a href="index.html" class="button is-link">ShaderShop</a></li>
+            <li class="column is-one-quarter"><a href="browse.html" class="button is-link">Browse</a></li>
+            <li class="column is-one-quarter"><a href="new.html" class="button is-primary is-outlined">New</a></li>
+        </ul>
+    </nav>
+    
+    <canvas id="shader"></canvas>
+    <div class="section">
+        <p id="fps" style="position: fixed; top: 10rem;color:white;">FPS:</p>
+    </div>
+    <div class="columns" style="position: fixed; color:white">
+        <div class="column">
+            <div class="box">
+                <p class="title">Width & Height</p>
+                <input type="number" id="width" value="400" min="20" max="800" step="1">
+                <input type="number" id="height" value="400" min="20" max="800" step="1">
+            </div>
+        </div>
+        <div class="column" id="height">
+
+        </div>
+    </div>
+    
+    <script>
+
+fetch("shader.glsl")
+    .then((res) => res.text())
+    .then((fragCode) => {
+
+        const canvas = document.querySelector("#shader");
+        var width = document.getElementById("width").value;
+        var height = document.getElementById("height").value;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+        const gl = canvas.getContext("webgl");
+
+        const verts = [
+            -1,  1,
+            1,  1,
+            1, -1,
+            -1, -1,
+        ];
+
+        const indices = [0, 1, 3, 1, 2, 3];
+        const vbuf = gl.createBuffer();
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+
+        const ibuf = gl.createBuffer();
+
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuf);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+
+        const vertCode =
+        'attribute vec2 v_pos;' +
+        'varying vec2 a_pos;' +
+            
+        'void main(void) {' +
+            'a_pos = v_pos;' +
+            'gl_Position = vec4(v_pos, 0.0, 1.0);' +
+        '}';
+
+        const vertShader = gl.createShader(gl.VERTEX_SHADER);
+        gl.shaderSource(vertShader, vertCode);
+        gl.compileShader(vertShader);
+
+        const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+        gl.shaderSource(fragShader, fragCode); 
+        gl.compileShader(fragShader);
+
+        const msg = gl.getShaderInfoLog(fragShader);
+
+        if (msg) console.error(msg);
+
+        const prog = gl.createProgram();
+
+        gl.attachShader(prog, vertShader);
+        gl.attachShader(prog, fragShader);
+        gl.linkProgram(prog);
+        gl.useProgram(prog);
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuf);
+        const coord = gl.getAttribLocation(prog, "v_pos");
+        gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0); 
+        gl.enableVertexAttribArray(coord);
+
+        gl.clearColor(0, 0, 0, 1);
+        gl.viewport(0, 0, canvas.width, canvas.height);
+        gl.enable(gl.DEPTH_TEST);
+
+        const timeLoc = gl.getUniformLocation(prog, "u_time");
+        const mouseLoc = gl.getUniformLocation(prog, "u_mouse");
+        let mouseX = 0;
+        let mouseY = 0;
+
+        canvas.addEventListener("mousemove", (e) => {
+            mouseX = e.clientX / canvas.width;
+            mouseY = 1.0 - e.clientY / canvas.height;
+        })
+
+        const frame = (t) => {
+            gl.uniform1f(timeLoc, t / 1000);
+            gl.uniform2f(mouseLoc, mouseX, mouseY);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
+            requestAnimationFrame(frame);
+        };
+
+        frame();
+
+    })
+    .catch(console.error);
+
+    </script>
+</body>
+</html>
