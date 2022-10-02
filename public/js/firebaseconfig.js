@@ -1,5 +1,5 @@
-import { initializeApp } from "./node_modules/firebase/app";
-import { getAnalytics } from "./node_modules/firebase/analytics";
+import { initializeApp } from "./firebase/app.js";
+import { getAnalytics } from "./firebase/analytics.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyAXaAMpnXtfXlkTtQNRsg8vYYWW-wou95w",
