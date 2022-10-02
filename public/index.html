@@ -194,6 +194,7 @@ void main(void) {
         editor.session.setMode("ace/mode/glsl");
 
         editor.setOption("fontSize", "16px");
+        editor.setOption("showPrintMargin", false)
         function changeEditorFontSize(size) {
             editor.setOption("fontSize", size + "px");
         }
