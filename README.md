@@ -8,9 +8,10 @@ to a different format, and converting ShaderShop shaders to Unity.
 ShaderShop uses the standard glsl format for shaders. The void main(void) function is the one that glsl uses as standard, but for easy export to shadertoy,
 we have added a second function that is formated how Shadertoy is, so that you can easily import shadertoy shaders, and shadershop shaders to shadertoy. 
 
-ShaderShop VS Shadertoy
-u_time | iTIme
-u_mouse | iMouse
+| ShaderShop  | Shadertoy   |
+| ----------- | ----------- |
+| u_time      |   iTIme     |
+| u_mouse     |   iMouse    |
 
 *There will be more uniform variables coming soon!
 
