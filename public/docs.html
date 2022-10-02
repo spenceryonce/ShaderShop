@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width">
+    <title>ShaderShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <nav class="navbar is-black is-1r-padding" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+            <a class="navbar-item is-spaced hover-lg" href="index.html">
+                <img src="ShaderShopLogoV2_white.png" width="112" height="58" class="">
+            </a>
+
+            <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false"
+                data-target="navbarBasicExample">
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+                <span aria-hidden="true"></span>
+            </a>
+        </div>
+
+        <div id="navbarBasicExample" class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item hover-lg" href="browse.html">
+                    Browse
+                </a>
+
+                <a class="navbar-item hover-lg" href="docs.html">
+                    Docs
+                </a>
+
+                <div class="navbar-item has-dropdown is-hoverable">
+                    <a class="navbar-link hover-lg">
+                        More Tools
+                    </a>
+
+                    <div class="navbar-dropdown">
+                        <a class="navbar-item">
+                            Shader Exporter
+                        </a>
+                        <a class="navbar-item">
+                            Shader Converter
+                        </a>
+                        <a class="navbar-item">
+                            ShaderShop to Unity
+                        </a>
+                        <hr class="navbar-divider">
+                        <a class="navbar-item">
+                            Report an issue
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="navbar-end">
+                <div class="navbar-item">
+                    <div class="buttons">
+                        <a class="button is-purple" href="index.html">
+                            <strong style="color:white;">New</strong>
+                        </a>
+                        <a class="button is-light">
+                            Log in
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="mini-container">
+        <h1 id="welcome-to-the-shadershop-wiki-">Welcome to the ShaderShop wiki!</h1>
+        <h2 id="introduction">Introduction</h2>
+        <p>Here is where you can find all sorts of useful information pertaining to creating shaders within ShaderShop. We
+            will go over the creation
+            of your first shader. What uniform variables are and how to use them, how to make a basic circle shader, what
+            GLSL even is, and finally how to export a ShaderShop shader to Shadertoy.</p>
+        <h2 id="creating-your-first-shader">Creating your First Shader</h2>
+        <p>Creating your first shader is easy. Delete from line 5 to line 35. Remove lines 39 to 42 and lines 44 to 52.</p>
+        <p>You should now have just the basics required to make a shader. Hit that compile button the in the bottom left
+            corner and you should see
+            a fully black shader. </p>
+        <p>You&#39;re done! You made your first shader! Congratulations!</p>
+        <h2 id="making-a-circle">Making a circle</h2>
+        <p>Okay, let&#39;s make a circle now. This is a bit more involved, but still extremely simple. Let&#39;s walk
+            through it. </p>
+        <p>First, go ahead and remove the lines shown in &quot;Creating your First Shader&quot;, you should now just have a
+            black screen. Right after the line that says &quot;vec3 color = vec3(0.0);&quot;, press enter a couple times and
+            add this line &quot;color = vec3(length(uv));&quot;.
+            The length function basically says for whatever point you give it, it will tell you how far away that point is
+            from the center of the screen. We pass in uv to the length function and for each pixel in the shader, it will
+            ask the question, how far away am I from the center of the screen. </p>
+        <p>If we then use those brightness (distance) values directly on all 3 channels (rgb) of our color, we are able to
+            see a visual representation of the distances of each pixel to the center of the screen. Which in turn, gives us
+            a nice little circle. </p>
+        <h2 id="what-is-glsl-">What is GLSL?</h2>
+        <p>OpenGL Shading Language (GLSL) is a high-level shading language based on the &#39;C&#39; language. It was created
+            to give developers more control of the graphics pipeline without having to use ARB Assembly language or
+            hardware-specific languages. </p>
+        <p>GLSL is executed directly by the graphics pipeline. There are quite a few different types of shaders, but the
+            most used are the Vertex Shader and the Fragment Shader (Pixel Shader). Vertex Shaders transform shape positions
+            into 3D drawing coordinates. Fragment Shaders compute the renderings of a shape&#39;s colors and other
+            attributes.</p>
+        <p>GLSL is not as intuitive as JavaScript. GLSL is strongly typed and there is a lot of math involving vectors and
+            matrices. It can get very complicated, very quickly, which is why there are libraries such as Threejs to ease
+            some of those complications. </p>
+        <p>Even with the complications, glsl is still the most flexible, fastest way of interacting directly with the GPU.
+        </p>
+        <h2 id="how-to-export-to-shadertoy-">How to export to ShaderToy?</h2>
+        <p>Convert any references of u_mouse to iMouse, any references of u_time to iTime. </p>
+        <p>Copy all the text inside the function &quot;void mainImage(out vec4 c, in vec2 fc)&quot;. Paste this directly
+            inside a new ShaderToy shader. Any function that you created can also now be copied over, making sure to replace
+            u_time and u_mouse with iTime and iMouse, respectively. </p>
+    </div>
+   
+</body>
+
+</html>
