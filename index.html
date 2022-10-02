@@ -4,6 +4,10 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
     <title>ShaderShop</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com"> 
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -13,47 +17,115 @@
             width: 100%;
             height: 100%;
             overflow: hidden;
+            font-family: 'Quicksand', sans-serif;
         }
+        #editor { 
+        position: absolute;
+        top: 5rem;
+        right: 1.5rem;
+        bottom: 1.5rem;
+        left: 40%;
+    }
     </style>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    
 </head>
 <body>
-    <nav>
-        <ul class="columns">
-            <li class="column is-one-quarter"><a href="index.html" class="button is-link">ShaderShop</a></li>
-            <li class="column is-one-quarter"><a href="browse.html" class="button is-link">Browse</a></li>
-            <li class="column is-one-quarter"><a href="new.html" class="button is-primary is-outlined">New</a></li>
-        </ul>
-    </nav>
+    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+        <div class="navbar-brand">
+          <a class="navbar-item is-spaced" href="index.html">
+            <img src="ShaderShopLogoV2_white.png" width="112" height="58" class="">
+          </a>
+      
+          <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </a>
+        </div>
+      
+        <div id="navbarBasicExample" class="navbar-menu">
+          <div class="navbar-start">
+            <a class="navbar-item">
+              Browse
+            </a>
+      
+            <a class="navbar-item">
+              Docs
+            </a>
+      
+            <div class="navbar-item has-dropdown is-hoverable">
+              <a class="navbar-link">
+                More Tools
+              </a>
+      
+              <div class="navbar-dropdown">
+                <a class="navbar-item">
+                  Shader Exporter
+                </a>
+                <a class="navbar-item">
+                  Shader Converter
+                </a>
+                <a class="navbar-item">
+                  ShaderShop to Unity
+                </a>
+                <hr class="navbar-divider">
+                <a class="navbar-item">
+                  Report an issue
+                </a>
+              </div>
+            </div>
+          </div>
+      
+          <div class="navbar-end">
+            <div class="navbar-item">
+              <div class="buttons">
+                <a class="button is-primary">
+                  <strong>New</strong>
+                </a>
+                <a class="button is-light">
+                  Log in
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
     
-    <canvas id="shader"></canvas>
+      <div class="section">
+        <div class="tile is-5" id="shaderViewer">
+            <div class="tile is-child">
+                <canvas id="shader"></canvas>
+            </div>
+           
+        </div>
+        <div class="tile is-7">
+            <div id="editor" class="tile is-child">function foo(items) {
+    var x = "All this is syntax highlighted";
+    return x;
+}
+            </div>
+        </div>
+       
+      </div>
+    
     <div class="section">
         <p id="fps" style="position: fixed; top: 10rem;color:white;">FPS:</p>
     </div>
-    <div class="columns" style="position: fixed; color:white">
-        <div class="column">
-            <div class="box">
-                <p class="title">Width & Height</p>
-                <input type="number" id="width" value="400" min="20" max="800" step="1">
-                <input type="number" id="height" value="400" min="20" max="800" step="1">
-            </div>
-        </div>
-        <div class="column" id="height">
-
-        </div>
-    </div>
-    
+    <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
     <script>
+        var editor = ace.edit("editor");
+        editor.setTheme("ace/theme/monokai");
+        editor.session.setMode("ace/mode/javascript");
 
 fetch("shader.glsl")
     .then((res) => res.text())
     .then((fragCode) => {
 
         const canvas = document.querySelector("#shader");
-        var width = document.getElementById("width").value;
-        var height = document.getElementById("height").value;
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight;
+        var width = 500;
+        var height = 500;
+        canvas.width = width;
+        canvas.height = height;
         const gl = canvas.getContext("webgl");
 
         const verts = [
