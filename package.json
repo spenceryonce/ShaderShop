@@ -1,6 +1,8 @@
 {
+  "type": "module",
   "dependencies": {
     "bulma": "^0.9.4",
     "firebase": "^9.10.0"
   }
 }
+
