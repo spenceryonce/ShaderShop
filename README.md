@@ -15,6 +15,9 @@ we have added a second function that is formated how Shadertoy is, so that you c
 
 *There will be more uniform variables coming soon!
 
+Check out the Wiki for more!
+https://github.com/spenceryonce/ShaderShop/wiki
+
 ## The Author
 
 My name is Spencer Yonce. I am the creator of ShaderShop. I am a graphics programmer from central US. I absolutely love shaders and graphics and maths of
