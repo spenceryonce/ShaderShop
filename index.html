@@ -16,21 +16,32 @@
         html,body {
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow: shown;
             font-family: 'Quicksand', sans-serif;
+        }
+        body {
+            background-color: rgb(13,17,23);
         }
         #editor { 
         position: absolute;
-        top: 5rem;
+        top: 6.5rem;
         right: 1.5rem;
         bottom: 1.5rem;
         left: 40%;
+    }
+    .is-purple {
+        background-color: #9448c7;
+        border-color: #9448c7;
+    }
+    .is-purple:hover {
+        background-color: #a55cd5;
+        border-color: #a55cd5;
     }
     </style>
     
 </head>
 <body>
-    <nav class="navbar is-dark" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-black" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
           <a class="navbar-item is-spaced" href="index.html">
             <img src="ShaderShopLogoV2_white.png" width="112" height="58" class="">
@@ -79,7 +90,7 @@
           <div class="navbar-end">
             <div class="navbar-item">
               <div class="buttons">
-                <a class="button is-primary">
+                <a class="button is-purple">
                   <strong>New</strong>
                 </a>
                 <a class="button is-light">
@@ -99,115 +110,198 @@
            
         </div>
         <div class="tile is-7">
-            <div id="editor" class="tile is-child">function foo(items) {
-    var x = "All this is syntax highlighted";
-    return x;
+            <div id="editor" class="tile is-child">precision mediump float;
+varying vec2 a_pos;
+uniform float u_time;
+uniform vec2 u_mouse;
+
+float lerp(float a, float b, float t){
+    return a + (b-a) * t;
+}
+
+float llerp(float t){
+    return t;
+}
+
+float squaredlerp(float t){
+    return t*t;
+}
+
+float quadlerp(float t){
+    return 1.0 - (1.0 - t) * (1.0 - t);
+}
+
+float ss(float t){
+    return lerp(quadlerp(t),squaredlerp(t),t);
+}
+
+float circle(vec2 uv, float r,float x, float y){
+    return ss(lerp(0.0,1.0,ss(((uv.x-x)*uv.x)/r+((uv.y-y)*uv.y)/r)));
+}
+
+vec3 lerpcolor(vec3 a, vec3 b, float t){
+    float abr = lerp(a.r,b.r,ss(t));
+    float abg = lerp(a.g,b.g,ss(t));
+    float abb = lerp(a.b,b.b,ss(t));
+    return vec3(abr,abg,abb);
+}
+void mainImage( out vec4 c, in vec2 fc )
+{
+    vec2 uv = fc;;
+    float s = 0.1;
+    float l = lerp(0.0,1.0,ss(s));
+    
+    float ci = circle(uv,0.5,0.0,0.0);
+    vec3 color = vec3(0.0);
+    
+    vec3 cmix1 = vec3(0.102, 1.0, 0.1922);
+    vec3 cmix2 = vec3(0.0471, 0.3451, 0.9412);
+    vec3 cres = lerpcolor(cmix1,cmix2,uv.x*uv.x*sin(u_time)+uv.y*uv.y*cos(u_time));
+    
+    color += 1.0-ci;
+    color += cres;
+    
+    
+    c = vec4(color,1.0);
+}
+
+void main(void) {
+
+    vec2 uv = a_pos;
+    mainImage(gl_FragColor, uv);
 }
             </div>
         </div>
-       
+       <div class="section">
+            <button class="button is-success" id="compileBtn">Compile</button>
+       </div>
       </div>
     
     <div class="section">
-        <p id="fps" style="position: fixed; top: 10rem;color:white;">FPS:</p>
+        <p id="fps" style="color:black;">FPS:</p>
     </div>
     <script src="js/ace.js" type="text/javascript" charset="utf-8"></script>
     <script>
         var editor = ace.edit("editor");
-        editor.setTheme("ace/theme/monokai");
-        editor.session.setMode("ace/mode/javascript");
+        editor.setTheme("ace/theme/one_dark");
+        editor.session.setMode("ace/mode/glsl");
 
-fetch("shader.glsl")
+
+/*fetch("shader.glsl")
     .then((res) => res.text())
     .then((fragCode) => {
 
-        const canvas = document.querySelector("#shader");
-        var width = 500;
-        var height = 500;
-        canvas.width = width;
-        canvas.height = height;
-        const gl = canvas.getContext("webgl");
+        
 
-        const verts = [
-            -1,  1,
-            1,  1,
-            1, -1,
-            -1, -1,
-        ];
+    })
+    .catch(console.error);*/
 
-        const indices = [0, 1, 3, 1, 2, 3];
-        const vbuf = gl.createBuffer();
+const canvas = document.querySelector("#shader");
+    var width = 500;
+    var height = 500;
+    canvas.width = width;
+    canvas.height = height;
+    var isInitialRender = true;
 
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
-        gl.bindBuffer(gl.ARRAY_BUFFER, null);
+    const gl = canvas.getContext("webgl");
+    var fragCode = editor.getValue();
 
-        const ibuf = gl.createBuffer();
+    var verts = [
+        -1,  1,
+        1,  1,
+        1, -1,
+        -1, -1,
+    ];
 
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuf);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
+    var indices = [0, 1, 3, 1, 2, 3];
+    var vbuf = gl.createBuffer();
 
-        const vertCode =
-        'attribute vec2 v_pos;' +
-        'varying vec2 a_pos;' +
-            
-        'void main(void) {' +
-            'a_pos = v_pos;' +
-            'gl_Position = vec4(v_pos, 0.0, 1.0);' +
-        '}';
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(verts), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ARRAY_BUFFER, null);
 
-        const vertShader = gl.createShader(gl.VERTEX_SHADER);
-        gl.shaderSource(vertShader, vertCode);
-        gl.compileShader(vertShader);
+    var ibuf = gl.createBuffer();
 
-        const fragShader = gl.createShader(gl.FRAGMENT_SHADER);
-        gl.shaderSource(fragShader, fragCode); 
-        gl.compileShader(fragShader);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuf);
+    gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(indices), gl.STATIC_DRAW);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, null);
 
-        const msg = gl.getShaderInfoLog(fragShader);
+    var vertCode =
+    'attribute vec2 v_pos;' +
+    'varying vec2 a_pos;' +
+        
+    'void main(void) {' +
+        'a_pos = v_pos;' +
+        'gl_Position = vec4(v_pos, 0.0, 1.0);' +
+    '}';
 
-        if (msg) console.error(msg);
+    var vertShader = gl.createShader(gl.VERTEX_SHADER);
+    gl.shaderSource(vertShader, vertCode);
+    gl.compileShader(vertShader);
 
-        const prog = gl.createProgram();
+    var fragShader = gl.createShader(gl.FRAGMENT_SHADER);
+    gl.shaderSource(fragShader, fragCode); 
+    gl.compileShader(fragShader);
 
-        gl.attachShader(prog, vertShader);
-        gl.attachShader(prog, fragShader);
-        gl.linkProgram(prog);
-        gl.useProgram(prog);
-        gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
-        gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuf);
-        const coord = gl.getAttribLocation(prog, "v_pos");
-        gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0); 
-        gl.enableVertexAttribArray(coord);
+    var msg = gl.getShaderInfoLog(fragShader);
 
-        gl.clearColor(0, 0, 0, 1);
-        gl.viewport(0, 0, canvas.width, canvas.height);
-        gl.enable(gl.DEPTH_TEST);
+    if (msg) console.error(msg);
 
-        const timeLoc = gl.getUniformLocation(prog, "u_time");
-        const mouseLoc = gl.getUniformLocation(prog, "u_mouse");
-        let mouseX = 0;
-        let mouseY = 0;
+    const prog = gl.createProgram();
 
-        canvas.addEventListener("mousemove", (e) => {
-            mouseX = e.clientX / canvas.width;
-            mouseY = 1.0 - e.clientY / canvas.height;
-        })
+    gl.attachShader(prog, vertShader);
+    gl.attachShader(prog, fragShader);
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vbuf);
+    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ibuf);
+    const coord = gl.getAttribLocation(prog, "v_pos");
+    gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0); 
+    gl.enableVertexAttribArray(coord);
 
-        const frame = (t) => {
+    gl.clearColor(0, 0, 0, 1);
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    gl.enable(gl.DEPTH_TEST);
+
+    const timeLoc = gl.getUniformLocation(prog, "u_time");
+    const mouseLoc = gl.getUniformLocation(prog, "u_mouse");
+    let mouseX = 0;
+    let mouseY = 0;
+
+    canvas.addEventListener("mousemove", (e) => {
+        mouseX = e.clientX / canvas.width;
+        mouseY = 1.0 - e.clientY / canvas.height;
+    });
+    var frame = (t) => {
             gl.uniform1f(timeLoc, t / 1000);
             gl.uniform2f(mouseLoc, mouseX, mouseY);
             gl.clear(gl.COLOR_BUFFER_BIT);
             gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
             requestAnimationFrame(frame);
-        };
+    };
 
-        frame();
+    frame();
 
-    })
-    .catch(console.error);
 
+
+document.getElementById("compileBtn").addEventListener("click", function() {
+    isInitialRender = false;
+
+    fragCode = editor.getValue();
+    gl.detachShader(prog, fragShader);
+    //gl.deleteShader(fragShader);
+
+    gl.shaderSource(fragShader, fragCode); 
+    gl.compileShader(fragShader);
+    
+    gl.attachShader(prog, fragShader);
+    gl.linkProgram(prog); 
+    gl.useProgram(prog);
+
+
+    
+})
+    
     </script>
 </body>
 </html>
