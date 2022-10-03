@@ -13,10 +13,13 @@ body {
   background-color: rgb(13, 17, 23);
 }
 #editor {
-  position: absolute;
-  width: 64%;
-  height: 90%;
+  /* position: absolute; */
+  padding: 1.5rem;
   margin-right: 1.5rem;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  min-height: 20rem;
 }
 .is-purple {
   background-color: #9448c7;

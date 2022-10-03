@@ -76,11 +76,12 @@
 
   <div class="mini-container">
     <div class="tile is-tall">
-      <div class="tile is-parent is-4 is-sm-margined" id="shaderViewer">
+      <div class="tile is-4 is-sm-margined" id="shaderViewer">
         <canvas id="shader"></canvas>
       </div>
-      <div class="tile is-parent is-sm-margined">
-        <div id="editor" class="tile is-child">precision mediump float;
+      <div class="tile is-sm-margined">
+        <div class="tile is-child" style="box-sizing: border-box;">
+          <div id="editor" class="tile is-child">precision mediump float;
 varying vec2 a_pos;
 uniform float u_time;
 uniform vec2 u_mouse;
@@ -110,7 +111,9 @@ void main(void) {
     vec2 uv = a_pos;
     mainImage(gl_FragColor, uv);
 }</div>
-      </div>
+                  
+        </div>
+        </div>
     </div>
     <div class="tile">
       <button class="button is-purple is-sm-margined" id="compileBtn" style="color:white;">Compile</button>
