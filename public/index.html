@@ -118,10 +118,12 @@ void main(void) {
     <div class="tile">
       <button class="button is-purple is-sm-margined" id="compileBtn" style="color:white;">Compile</button>
       <div class="tile is-2">
-        <input type="number" id="fontSizeInp" class="input is-sm-margined"></input><span style="color:white;">Font
+        <input type="number" id="fontSizeInp" class="input is-sm-margined" value="16"></input><span style="color:white;">Font
           Size</span>
         <button class="button is-purple is-sm-margined" id="saveFontSizeBtn" style="color:white;">Save</button>
       </div>
+      <div class="tile is-2">
+        <button class="button is-purple is-sm-margined" id="exportGLSLbtn" style="color:white;">Export GLSL</button>
     </div>
   </div>
 
@@ -142,9 +144,28 @@ void main(void) {
     function changeEditorFontSize(size) {
       editor.setOption("fontSize", size + "px");
     }
+    function exportGLSL() {
+      var code = editor.getValue();
+      const a = document.createElement('a');
+
+      var file = new Blob([code], { type: "text/plain;charset=utf-8" });
+      var date = new Date();
+
+      var dateStr = date.toISOString().replace(/:/g, "-").replace(/\./g, "-").replace(/ /g, "-");
+      a.href= URL.createObjectURL(file);
+      a.download = 'ShaderShop-' + dateStr + '.glsl';
+      a.click();
+
+      URL.revokeObjectURL(a.href);
+
+    }
+
 
     var fontSizeInp = document.getElementById("fontSizeInp");
     var saveFontSizeBtn = document.getElementById("saveFontSizeBtn");
+    var exportGLSLbtn = document.getElementById("exportGLSLbtn");
+
+    exportGLSLbtn.addEventListener("click", exportGLSL);
 
     saveFontSizeBtn.addEventListener("click", function () {
       changeEditorFontSize(fontSizeInp.value);
