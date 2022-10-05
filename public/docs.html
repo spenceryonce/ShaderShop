@@ -77,19 +77,19 @@
 
 
     <div class="mini-container">
-        <h1 id="welcome-to-the-shadershop-wiki-">Welcome to the ShaderShop wiki!</h1>
-        <h2 id="introduction">Introduction</h2>
+        <h1 id="welcome-to-the-shadershop-wiki-" class="is-size-1">Welcome to the ShaderShop wiki!</h1>
+        <h2 id="introduction" class="is-size-2">Introduction</h2>
         <p>Here is where you can find all sorts of useful information pertaining to creating shaders within ShaderShop. We
             will go over the creation
             of your first shader. What uniform variables are and how to use them, how to make a basic circle shader, what
             GLSL even is, and finally how to export a ShaderShop shader to Shadertoy.</p>
-        <h2 id="creating-your-first-shader">Creating your First Shader</h2>
+        <h2 id="creating-your-first-shader" class="is-size-2">Creating your First Shader</h2>
         <p>Creating your first shader is easy. Delete from line 5 to line 35. Remove lines 39 to 42 and lines 44 to 52.</p>
         <p>You should now have just the basics required to make a shader. Hit that compile button the in the bottom left
             corner and you should see
             a fully black shader. </p>
         <p>You&#39;re done! You made your first shader! Congratulations!</p>
-        <h2 id="making-a-circle">Making a circle</h2>
+        <h2 id="making-a-circle" class="is-size-2">Making a circle</h2>
         <p>Okay, let&#39;s make a circle now. This is a bit more involved, but still extremely simple. Let&#39;s walk
             through it. </p>
         <p>First, go ahead and remove the lines shown in &quot;Creating your First Shader&quot;, you should now just have a
@@ -101,7 +101,7 @@
         <p>If we then use those brightness (distance) values directly on all 3 channels (rgb) of our color, we are able to
             see a visual representation of the distances of each pixel to the center of the screen. Which in turn, gives us
             a nice little circle. </p>
-        <h2 id="what-is-glsl-">What is GLSL?</h2>
+        <h2 id="what-is-glsl-" class="is-size-2">What is GLSL?</h2>
         <p>OpenGL Shading Language (GLSL) is a high-level shading language based on the &#39;C&#39; language. It was created
             to give developers more control of the graphics pipeline without having to use ARB Assembly language or
             hardware-specific languages. </p>
@@ -114,7 +114,7 @@
             some of those complications. </p>
         <p>Even with the complications, glsl is still the most flexible, fastest way of interacting directly with the GPU.
         </p>
-        <h2 id="how-to-export-to-shadertoy-">How to export to ShaderToy?</h2>
+        <h2 id="how-to-export-to-shadertoy-" class="is-size-2">How to export to ShaderToy?</h2>
         <p>Convert any references of u_mouse to iMouse, any references of u_time to iTime. </p>
         <p>Copy all the text inside the function &quot;void mainImage(out vec4 c, in vec2 fc)&quot;. Paste this directly
             inside a new ShaderToy shader. Any function that you created can also now be copied over, making sure to replace
