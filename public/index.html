@@ -160,6 +160,24 @@ void main(void) {
 
     }
 
+    function resizeCanvasToDisplaySize(shaderViewer,canvas) {
+    // Lookup the size the browser is displaying the canvas in CSS pixels.
+    const displayWidth  = shaderViewer.offsetWidth;
+    const displayHeight = shaderViewer.offsetHeight;
+
+    // Check if the canvas is not the same size.
+    const needResize = canvas.width  !== displayWidth ||
+                       canvas.height !== displayHeight;
+
+    if (needResize) {
+      // Make the canvas the same size
+      canvas.width  = displayWidth;
+      canvas.height = displayHeight;
+    }
+
+    return needResize;
+  }
+
 
     var fontSizeInp = document.getElementById("fontSizeInp");
     var saveFontSizeBtn = document.getElementById("saveFontSizeBtn");
@@ -259,6 +277,8 @@ void main(void) {
     var frame = (t) => {
       gl.uniform1f(timeLoc, t / 1000);
       gl.uniform2f(mouseLoc, mouseX, mouseY);
+      resizeCanvasToDisplaySize(shaderViewer,canvas);
+      gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
       requestAnimationFrame(frame);
