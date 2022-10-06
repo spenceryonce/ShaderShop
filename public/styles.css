@@ -47,3 +47,7 @@ body {
 .hover-lg:hover {
   background-color: rgb(51, 51, 51);
 }
+.green-border {
+  border: 1px solid rgb(54, 170, 38);
+  transition: all 0.2s ease-in-out;
+}
