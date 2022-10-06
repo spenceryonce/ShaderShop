@@ -83,7 +83,8 @@
         <div class="tile is-child" style="box-sizing: border-box;">
           <div id="editor" class="tile is-child">precision mediump float;
 varying vec2 a_pos;
-uniform float u_time;
+uniform float u_time; //frames since page load
+uniform float u_stime; //frames since shader compile
 uniform vec2 u_mouse;
 
 
@@ -199,6 +200,8 @@ void main(void) {
 
     const canvas = document.querySelector("#shader");
     const shaderViewer = document.querySelector("#shaderViewer");
+    let request;
+    let st = 0.0;
     var width = shaderViewer.offsetWidth;
     var height = shaderViewer.offsetHeight;
     canvas.width = width;
@@ -266,6 +269,7 @@ void main(void) {
     gl.enable(gl.DEPTH_TEST);
 
     var timeLoc = gl.getUniformLocation(prog, "u_time");
+    var shaderTimeLoc = gl.getUniformLocation(prog, "u_stime");
     var mouseLoc = gl.getUniformLocation(prog, "u_mouse");
     let mouseX = 0;
     let mouseY = 0;
@@ -277,11 +281,13 @@ void main(void) {
     var frame = (t) => {
       gl.uniform1f(timeLoc, t / 1000);
       gl.uniform2f(mouseLoc, mouseX, mouseY);
+      st += 1.0;
+      gl.uniform1f(shaderTimeLoc, st / 1000);
       resizeCanvasToDisplaySize(shaderViewer,canvas);
       gl.viewport(0, 0, canvas.width, canvas.height);
       gl.clear(gl.COLOR_BUFFER_BIT);
       gl.drawElements(gl.TRIANGLES, indices.length, gl.UNSIGNED_SHORT, 0);
-      requestAnimationFrame(frame);
+      request = requestAnimationFrame(frame);
     };
 
     frame();
@@ -289,6 +295,8 @@ void main(void) {
 
 
     document.getElementById("compileBtn").addEventListener("click", function () {
+      st = 0.0;
+      cancelAnimationFrame(request);
       isInitialRender = false;
 
       fragCode = editor.getValue();
@@ -304,6 +312,9 @@ void main(void) {
 
       timeLoc = gl.getUniformLocation(prog, "u_time");
       mouseLoc = gl.getUniformLocation(prog, "u_mouse");
+      shaderTimeLoc = gl.getUniformLocation(prog, "u_stime");
+
+      frame();
 
 
 
